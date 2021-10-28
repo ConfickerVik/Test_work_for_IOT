@@ -1,5 +1,6 @@
-from flask import Flask, request, jsonify
-from flask_restful import Resource, Api
+from flask import Flask
+from flask_restful import Resource, Api, reqparse
+from werkzeug.datastructures import FileStorage
 import apps.CalculatingTasks.logic as logicCT
 import apps.LinearDependence.logic as logicLD
 
@@ -7,17 +8,24 @@ import apps.LinearDependence.logic as logicLD
 app = Flask(__name__)
 api = Api(app)
 
+parser = reqparse.RequestParser()
+parser.add_argument('file',
+                    type=FileStorage,
+                    location='files',
+                    required=True
+                    )
+
 
 class LinearDependence(Resource):
 
     def get(self):
-        obj_ld = logicLD.LinearDependence(r"C:\Users\confi\PycharmProjects\Test_work_for_IOT\apps\LinearDependence\csv\data.csv")
-        response = obj_ld.get_lin_dep_vect()
-
-        return response
+        pass
 
     def post(self):
-        pass
+        args = parser.parse_args()
+        obj_ld = logicLD.LinearDependence(args["file"])
+        response = obj_ld.get_lin_dep_vect()
+        return response
 
 
 class CalculatingTasks(Resource):
